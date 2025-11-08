@@ -5,7 +5,7 @@ This repository showcases a GitHub Actions pipeline that scans Terraform code fo
 ## Components
 
 - `terraform/main.tf` – Sample AWS RDS instance with intentionally insecure defaults (no encryption, public access, outdated engine, short backup retention).
-- `warning_demo.py` – Python script that parses the Terraform snippet and emits `::warning` annotations referencing CIS Amazon RDS Benchmark controls plus the upcoming Q2 2026 deadline. Messages are prefixed with hardening keys (`AWS-RDS-03`, `AWS-RDS-07`, `AWS-RDS-12`, `AWS-RDS-19`, `AWS-RDS-24`).
+- `warning_demo.py` – Python script that parses the Terraform snippet and emits `::warning` annotations referencing CIS Amazon RDS Benchmark controls plus the upcoming Q2 2026 deadline. Messages are prefixed with hardening keys (`AWS-RDS-03`, `AWS-RDS-07`, `AWS-RDS-12`, `AWS-RDS-19`, `AWS-RDS-24`) and feed the `ComplianceFrameworkPoC` SARIF scanner.
 - `.github/workflows/python-warning-demo.yml` – Workflow running Terraform `init`/`validate`, executing the scanner, and uploading the generated SARIF so findings appear in the PR annotations and the GitHub Security tab.
 
 ## Technischer Ablauf
@@ -22,8 +22,8 @@ This repository showcases a GitHub Actions pipeline that scans Terraform code fo
    - Jede Verletzung wird sowohl als GitHub-Log-Annotation (`::warning ...`) als auch als strukturierter Eintrag in einer Findings-Liste gespeichert.
    - Nach Abschluss serialisiert der Scanner sämtliche Findings in eine SARIF-Datei unter `reports/hardening-results.sarif`. Die Regel-Metadaten enthalten CIS-Referenzen und helfen GitHub beim Mapping der Alerts.
 4. **Reporting**
-   - Der Workflow ruft `github/codeql-action/upload-sarif` auf und übermittelt das SARIF-Artefakt (erfordert `security-events: write`-Berechtigung).
-   - GitHub erstellt daraus Code-Scanning-Alerts, die sowohl im Pull-Request (Annotationen) als auch unter **Security → Code scanning alerts** sichtbar sind.
+   - Der Workflow ruft `github/codeql-action/upload-sarif` auf und übermittelt das SARIF-Artefakt des `ComplianceFrameworkPoC`-Scanners (erfordert `security-events: write`-Berechtigung).
+   - GitHub erstellt daraus Code-Scanning-Alerts, deren Titel mit den Hardening-Keys (z. B. `AWS-RDS-19 - Encryption at rest`) beginnen und sowohl im Pull-Request (Annotationen) als auch unter **Security → Code scanning alerts** sichtbar sind.
 
 ## Local test
 

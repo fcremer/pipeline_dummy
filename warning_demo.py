@@ -3,8 +3,8 @@
 
 Each warning references an internal hardening key (e.g., AWS-RDS-19) aligned to
 CIS Amazon RDS Benchmark v1.1 controls and the Q2 2026 compliance deadline.
-Results are also exported as SARIF so GitHub can surface the findings directly
-in the Security tab.
+Results are exported as SARIF so GitHub can surface the findings directly in
+the Security tab via the ComplianceFrameworkPoC scanner output.
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ from typing import Iterable, List
 
 TERRAFORM_FILE = Path("terraform/main.tf")
 SARIF_OUTPUT = Path("reports/hardening-results.sarif")
+TOOL_NAME = "ComplianceFrameworkPoC"
 
 HARDENING_RULES = {
     "AWS-RDS-03": {
@@ -144,7 +145,7 @@ def write_sarif(findings: List[Finding]) -> None:
     for key, meta in HARDENING_RULES.items():
         rule = {
             "id": key,
-            "name": meta["name"],
+            "name": f"{key} - {meta['name']}",
             "shortDescription": {"text": meta["short"]},
             "fullDescription": {"text": meta["full"]},
             "helpUri": "https://www.cisecurity.org/benchmark/amazon_web_services",
@@ -179,7 +180,7 @@ def write_sarif(findings: List[Finding]) -> None:
             {
                 "tool": {
                     "driver": {
-                        "name": "terraform-hardening-demo",
+                        "name": TOOL_NAME,
                         "rules": rules,
                     }
                 },
