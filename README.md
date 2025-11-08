@@ -1,16 +1,24 @@
 # pipeline_dummy
 
-Dieses Repo zeigt eine minimalistische GitHub-Actions-Pipeline, die Warnungen (Annotations) in Pull-Requests erzeugt.
+Dieses Repo demonstriert eine GitHub-Actions-Pipeline, die Terraform-Code gegen vereinfachte CIS-Datenbank-Hardening-Regeln prüft und Warnungen erzeugt, sobald Einstellungen spätestens ab Q2 2026 zur Non-Compliance führen (z. B. EOL-Engine-Versionen).
 
 ## Bestandteile
 
-- `warning_demo.py` – kleines Python-Skript, das Demo-Warnungen via `::warning`-Kommando erzeugt.
-- `.github/workflows/python-warning-demo.yml` – Workflow, der das Skript auf `push` und `pull_request` gegen `main` ausführt.
+- `terraform/main.tf` – Beispielhafte AWS-RDS-Instanz mit absichtlich unsicheren Defaults (keine Verschlüsselung, public access, alte Engine-Version, kurze Backups).
+- `warning_demo.py` – Python-Skript, das den Terraform-Code parst und per `::warning`-Annotation Verstöße gegen CIS Amazon RDS Benchmark und interne Hardening-Pflichten meldet.
+- `.github/workflows/python-warning-demo.yml` – Workflow, der Terraform init/validate ausführt und anschließend das Skript laufen lässt, um Warnungen direkt im PR/Commit anzuzeigen.
 
 ## Lokaler Test
 
 ```bash
+# optional: Terraform Syntaxcheck
+cd terraform
+terraform init -backend=false
+terraform validate
+cd ..
+
+# Hardening-Check (emittiert die gleichen Warnungen wie die Pipeline)
 python warning_demo.py
 ```
 
-Im Workflow-Log erscheinen die gleichen Warnungen automatisch als Hinweis/Annotation im PR.
+Die GitHub Action zeigt die selben Warnungen als Annotation im Workflow-Log eines Push bzw. Pull-Requests gegen `main`.
