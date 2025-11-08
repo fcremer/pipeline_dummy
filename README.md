@@ -8,6 +8,23 @@ This repository showcases a GitHub Actions pipeline that scans Terraform code fo
 - `warning_demo.py` – Python script that parses the Terraform snippet and emits `::warning` annotations referencing CIS Amazon RDS Benchmark controls plus the upcoming Q2 2026 deadline. Messages are prefixed with hardening keys (`AWS-RDS-03`, `AWS-RDS-07`, `AWS-RDS-12`, `AWS-RDS-19`, `AWS-RDS-24`).
 - `.github/workflows/python-warning-demo.yml` – Workflow running Terraform `init`/`validate`, executing the scanner, and uploading the generated SARIF so findings appear in the PR annotations and the GitHub Security tab.
 
+## Technischer Ablauf
+
+1. **Checkout & Tooling**
+   - `actions/checkout` liefert den Code.
+   - `actions/setup-python` stellt Python 3.11 bereit.
+   - `hashicorp/setup-terraform` installiert Terraform 1.6.6.
+2. **Terraform Stufe**
+   - `terraform init -backend=false` initialisiert Provider und Module ohne Remote-Backend (ausreichend für statische Analyse).
+   - `terraform validate` stellt sicher, dass die HCL-Syntax korrekt ist, bevor die benutzerdefinierten Checks laufen.
+3. **Hardening Scan (`warning_demo.py`)**
+   - Liest `terraform/main.tf`, nutzt Regex-Matches für definierte Attribute und erzeugt Findings mit internen Hardening-Keys.
+   - Jede Verletzung wird sowohl als GitHub-Log-Annotation (`::warning ...`) als auch als strukturierter Eintrag in einer Findings-Liste gespeichert.
+   - Nach Abschluss serialisiert der Scanner sämtliche Findings in eine SARIF-Datei unter `reports/hardening-results.sarif`. Die Regel-Metadaten enthalten CIS-Referenzen und helfen GitHub beim Mapping der Alerts.
+4. **Reporting**
+   - Der Workflow ruft `github/codeql-action/upload-sarif` auf und übermittelt das SARIF-Artefakt (erfordert `security-events: write`-Berechtigung).
+   - GitHub erstellt daraus Code-Scanning-Alerts, die sowohl im Pull-Request (Annotationen) als auch unter **Security → Code scanning alerts** sichtbar sind.
+
 ## Local test
 
 ```bash
