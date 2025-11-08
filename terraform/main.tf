@@ -14,7 +14,7 @@ resource "aws_db_instance" "legacy_postgres" {
   allocated_storage       = 20
   username                = "postgres"
   password                = "example-password"
-  publicly_accessible     = false
+  publicly_accessible     = true
   storage_encrypted       = true
   backup_retention_period = 7
   skip_final_snapshot     = true
