@@ -1,24 +1,24 @@
 # pipeline_dummy
 
-Dieses Repo demonstriert eine GitHub-Actions-Pipeline, die Terraform-Code gegen vereinfachte CIS-Datenbank-Hardening-Regeln prüft und Warnungen erzeugt, sobald Einstellungen spätestens ab Q2 2026 zur Non-Compliance führen (z. B. EOL-Engine-Versionen).
+This repository showcases a GitHub Actions pipeline that scans Terraform code for simplified CIS Amazon RDS Benchmark controls and raises warning annotations whenever settings will become non-compliant (e.g., EOL engine versions) by Q2 2026.
 
-## Bestandteile
+## Components
 
-- `terraform/main.tf` – Beispielhafte AWS-RDS-Instanz mit absichtlich unsicheren Defaults (keine Verschlüsselung, public access, alte Engine-Version, kurze Backups).
-- `warning_demo.py` – Python-Skript, das den Terraform-Code parst und per `::warning`-Annotation Verstöße gegen CIS Amazon RDS Benchmark und interne Hardening-Pflichten meldet.
-- `.github/workflows/python-warning-demo.yml` – Workflow, der Terraform init/validate ausführt und anschließend das Skript laufen lässt, um Warnungen direkt im PR/Commit anzuzeigen.
+- `terraform/main.tf` – Sample AWS RDS instance with intentionally insecure defaults (no encryption, public access, outdated engine, short backup retention).
+- `warning_demo.py` – Python script that parses the Terraform snippet and emits `::warning` annotations referencing CIS Amazon RDS Benchmark controls plus the upcoming Q2 2026 deadline.
+- `.github/workflows/python-warning-demo.yml` – Workflow running Terraform `init`/`validate` followed by the Python scanner so the warnings appear directly on pushes and pull requests against `main`.
 
-## Lokaler Test
+## Local test
 
 ```bash
-# optional: Terraform Syntaxcheck
+# optional: Terraform syntax check
 cd terraform
 terraform init -backend=false
 terraform validate
 cd ..
 
-# Hardening-Check (emittiert die gleichen Warnungen wie die Pipeline)
+# Hardening scan (emits the same warnings as the pipeline)
 python warning_demo.py
 ```
 
-Die GitHub Action zeigt die selben Warnungen als Annotation im Workflow-Log eines Push bzw. Pull-Requests gegen `main`.
+The GitHub Action shows the identical annotations inside the workflow log when triggered via push or pull request.

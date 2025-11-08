@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prüft Terraform-Code auf vereinfachte CIS-RDS-Hardening-Verstöße."""
+"""Checks Terraform code for simplified CIS Amazon RDS hardening violations."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ TERRAFORM_FILE = Path("terraform/main.tf")
 
 def read_terraform_source() -> tuple[str, list[str]]:
     if not TERRAFORM_FILE.exists():
-        print(f"::error::Terraform-Datei {TERRAFORM_FILE} fehlt – keine Checks möglich")
+        print(f"::error::Terraform file {TERRAFORM_FILE} not found – cannot run checks")
         sys.exit(1)
     text = TERRAFORM_FILE.read_text(encoding="utf-8")
     return text, text.splitlines()
@@ -36,7 +36,7 @@ def check_storage_encryption(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "storage_encrypted")
         emit_warning(
             line,
-            "CIS Amazon RDS Benchmark – Encryption at Rest: 'storage_encrypted' ist nicht aktiv. Dies verletzt Hardening-Richtlinien und ist spätestens ab Q2 2026 nicht mehr zulässig.",
+            "CIS Amazon RDS Benchmark v1.1 – Encryption at Rest: 'storage_encrypted' is disabled. This control becomes mandatory by Q2 2026.",
         )
 
 
@@ -46,7 +46,7 @@ def check_public_access(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "publicly_accessible")
         emit_warning(
             line,
-            "CIS Amazon RDS Benchmark – Network Exposure: RDS-Instanz ist öffentlich erreichbar. Segmentierungspflicht verletzt Hardening-Vorgaben.",
+            "CIS Amazon RDS Benchmark v1.1 – Network Exposure: Instance is publicly accessible, violating segmentation requirements.",
         )
 
 
@@ -57,7 +57,7 @@ def check_backup_retention(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "backup_retention_period")
         emit_warning(
             line,
-            "CIS Amazon RDS Benchmark – Automated Backups: Aufbewahrungszeit unter 7 Tagen. Notwendig für Audit-Trail und wird ab Q2 2026 als Non-Compliance gewertet.",
+            "CIS Amazon RDS Benchmark v1.1 – Automated Backups: retention <7 days. Non-compliant after Q2 2026.",
         )
 
 
@@ -70,7 +70,7 @@ def check_engine_version(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "engine_version")
         emit_warning(
             line,
-            "CIS Amazon RDS Benchmark – Supported Engine Versions: Engine-Version <14.x erreicht EOL vor Q2 2026. Update erforderlich, sonst Hardening-Verstoß.",
+            "CIS Amazon RDS Benchmark v1.1 – Supported Engine Versions: Engine version <14.x reaches EOL before Q2 2026; upgrade required.",
         )
 
 
@@ -80,12 +80,12 @@ def check_performance_insights(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "performance_insights_enabled")
         emit_warning(
             line,
-            "Monitoring/Hardening: Performance Insights fehlen, wodurch sicherheitsrelevante Metriken nicht erfasst werden. Pflicht laut interner DB-Hardening-Richtlinie ab Q2 2026.",
+            "CIS Amazon RDS Benchmark v1.1 – Monitoring: Performance Insights disabled, preventing metric collection required by Q2 2026.",
         )
 
 
 def main() -> None:
-    print("Starte Terraform-Hardening-Demo...")
+    print("Starting Terraform hardening demo...")
     text, lines = read_terraform_source()
 
     check_storage_encryption(text, lines)
@@ -94,7 +94,7 @@ def main() -> None:
     check_engine_version(text, lines)
     check_performance_insights(text, lines)
 
-    print("Prüfung abgeschlossen – siehe Warnungen für Details.")
+    print("Scan finished – review warnings for details.")
 
 
 if __name__ == "__main__":
