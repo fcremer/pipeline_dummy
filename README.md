@@ -23,7 +23,7 @@ This repository showcases a GitHub Actions pipeline that scans Terraform code fo
    - Nach Abschluss serialisiert der Scanner sämtliche Findings in eine SARIF-Datei unter `reports/hardening-results.sarif`. Die Regel-Metadaten enthalten CIS-Referenzen und helfen GitHub beim Mapping der Alerts.
 4. **Reporting**
    - Der Workflow ruft `github/codeql-action/upload-sarif` auf und übermittelt das SARIF-Artefakt des `ComplianceFrameworkPoC`-Scanners (erfordert `security-events: write`-Berechtigung).
-   - GitHub erstellt daraus Code-Scanning-Alerts, deren Titel mit den Hardening-Keys (z. B. `AWS-RDS-19 - Encryption at rest`) beginnen und sowohl im Pull-Request (Annotationen) als auch unter **Security → Code scanning alerts** sichtbar sind.
+   - GitHub erstellt daraus Code-Scanning-Alerts, deren Titel mit den Hardening-Keys (z. B. `[AWS-RDS-19]: Encryption at rest`) beginnen und sowohl im Pull-Request (Annotationen) als auch unter **Security → Code scanning alerts** sichtbar sind.
 
 ## Local test
 

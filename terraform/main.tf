@@ -6,7 +6,7 @@ provider "aws" {
   region = "eu-central-1"
 }
 
-resource "aws_db_instance" "legacy_postgres" {
+resource "aws_db_instance" "legacy_postgres2" {
   identifier              = "legacy-postgres-demo"
   engine                  = "postgres"
   engine_version          = "12.4"
