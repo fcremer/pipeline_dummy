@@ -37,3 +37,9 @@ jobs:
 
       - name: Run hardening demo
         run: python warning_demo.py
+
+      - name: Upload SARIF report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/hardening-results.sarif
+          category: terraform-hardening
