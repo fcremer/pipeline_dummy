@@ -9,14 +9,14 @@ provider "aws" {
 resource "aws_db_instance" "legacy_postgres" {
   identifier              = "legacy-postgres-demo"
   engine                  = "postgres"
-  engine_version          = "12.4"
+  engine_version          = "14.10"
   instance_class          = "db.t3.micro"
   allocated_storage       = 20
   username                = "postgres"
   password                = "example-password"
-  publicly_accessible     = true
-  storage_encrypted       = false
-  backup_retention_period = 1
+  publicly_accessible     = false
+  storage_encrypted       = true
+  backup_retention_period = 7
   skip_final_snapshot     = true
-  performance_insights_enabled = false
+  performance_insights_enabled = true
 }
