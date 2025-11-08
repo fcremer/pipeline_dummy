@@ -145,8 +145,8 @@ def write_sarif(findings: List[Finding]) -> None:
     for key, meta in HARDENING_RULES.items():
         rule = {
             "id": key,
-            "name": f"{key} - {meta['name']}",
-            "shortDescription": {"text": meta["short"]},
+            "name": f"[{key}] {meta['name']}",
+            "shortDescription": {"text": f"[{key}]: {meta['short']}"},
             "fullDescription": {"text": meta["full"]},
             "helpUri": "https://www.cisecurity.org/benchmark/amazon_web_services",
             "defaultConfiguration": {"level": "warning"},
