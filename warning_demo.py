@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Checks Terraform code for simplified CIS Amazon RDS hardening violations."""
+"""Checks Terraform code for simplified CIS Amazon RDS hardening violations.
+
+Each warning references an internal hardening key (e.g., AWS-RDS-19) aligned to
+CIS Amazon RDS Benchmark v1.1 controls and the Q2 2026 compliance deadline.
+"""
 
 from __future__ import annotations
 
@@ -26,8 +30,8 @@ def line_with_token(lines: Iterable[str], token: str) -> int:
     return 1
 
 
-def emit_warning(line: int, message: str) -> None:
-    print(f"::warning file={TERRAFORM_FILE},line={line},col=1::{message}")
+def emit_warning(line: int, key: str, message: str) -> None:
+    print(f"::warning file={TERRAFORM_FILE},line={line},col=1::[{key}] {message}")
 
 
 def check_storage_encryption(text: str, lines: list[str]) -> None:
@@ -36,6 +40,7 @@ def check_storage_encryption(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "storage_encrypted")
         emit_warning(
             line,
+            "AWS-RDS-19",
             "CIS Amazon RDS Benchmark v1.1 – Encryption at Rest: 'storage_encrypted' is disabled. This control becomes mandatory by Q2 2026.",
         )
 
@@ -46,6 +51,7 @@ def check_public_access(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "publicly_accessible")
         emit_warning(
             line,
+            "AWS-RDS-07",
             "CIS Amazon RDS Benchmark v1.1 – Network Exposure: Instance is publicly accessible, violating segmentation requirements.",
         )
 
@@ -57,6 +63,7 @@ def check_backup_retention(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "backup_retention_period")
         emit_warning(
             line,
+            "AWS-RDS-12",
             "CIS Amazon RDS Benchmark v1.1 – Automated Backups: retention <7 days. Non-compliant after Q2 2026.",
         )
 
@@ -70,6 +77,7 @@ def check_engine_version(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "engine_version")
         emit_warning(
             line,
+            "AWS-RDS-03",
             "CIS Amazon RDS Benchmark v1.1 – Supported Engine Versions: Engine version <14.x reaches EOL before Q2 2026; upgrade required.",
         )
 
@@ -80,6 +88,7 @@ def check_performance_insights(text: str, lines: list[str]) -> None:
         line = line_with_token(lines, "performance_insights_enabled")
         emit_warning(
             line,
+            "AWS-RDS-24",
             "CIS Amazon RDS Benchmark v1.1 – Monitoring: Performance Insights disabled, preventing metric collection required by Q2 2026.",
         )
 
