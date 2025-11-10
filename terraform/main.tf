@@ -18,5 +18,5 @@ resource "aws_db_instance" "legacy_postgres" {
   storage_encrypted       = true
   backup_retention_period = 7
   skip_final_snapshot     = true
-  performance_insights_enabled = true
+  performance_insights_enabled = false
 }
